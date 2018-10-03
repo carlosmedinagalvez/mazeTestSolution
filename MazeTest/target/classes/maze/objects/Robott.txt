@@ -1,0 +1,12 @@
+package maze.objects;
+
+public interface Robot {
+	public void walk(int x, int y);
+	public void walk2(int x, int y);
+	public Boolean moveUp();
+	public Boolean moveDown();
+	public Boolean moveRight();
+	public Boolean moveLeft();
+	void registerMovement(Directions direction);
+	void start(Integer coordinateX, Integer coordinateY);
+}

@@ -1,0 +1,10 @@
+Assumptions
+=========================
+
+
+1. This implementation handles only situations for cross-point with 2 alternative ways.
+   The situations where a Robot finds cross points with up to 3 alternative paths are NOT supported
+   because of not enough development time.
+2. This algorithm was tested only with the provided maze sample, again because of time restrictions.
+   Might be it does not function correctly when applied to other maze.
+ 

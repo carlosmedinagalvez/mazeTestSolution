@@ -1,0 +1,307 @@
+package maze.objects;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class RobotImpl implements Robot {
+
+	String mazeMAtrix[][] = {{"X","X","X","X","X","X","X","X","X","X","X","X","X","X","X"},
+							 {"X"," "," "," "," "," "," "," "," "," "," "," "," "," ","X"},
+	                         {"X"," ","X","X","X","X","X","X","X","X","X","X","X"," ","X"},
+	                         {"X"," ","X","S"," "," "," "," "," "," "," "," ","X"," ","X"},
+	                         {"X"," ","X","X","X","X","X","X","X","X","X"," ","X"," ","X"},
+	                         {"X"," ","X","X","X","X","X","X","X","X","X"," ","X"," ","X"},
+	                         {"X"," ","X","X","X","X"," "," "," "," "," "," ","X"," ","X"},
+	                         {"X"," ","X","X","X","X"," ","X","X","X","X"," ","X"," ","X"},
+	                         {"X"," ","X","X","X","X"," ","X","X","X","X"," ","X"," ","X"},
+	                         {"X"," ","X"," "," "," "," ","X","X","X","X","X","X"," ","X"},
+	                         {"X"," ","X"," ","X","X","X","X","X","X","X","X","X"," ","X"},
+	                         {"X"," ","X"," ","X","X","X","X","X","X","X","X","X"," ","X"},
+	                         {"X"," ","X"," "," "," "," "," "," "," "," "," ","X"," ","X"},
+	                         {"X"," ","X","X","X","X","X","X","X","X","X"," "," "," ","X"},
+	                         {"X","F","X","X","X","X","X","X","X","X","X","X","X","X","X"}};
+	Integer movementCounter = new Integer(0);
+
+	private int x;
+	private int y;
+	private Directions lastDirection = Directions.STATIC;
+
+	public RobotImpl(int x,int y) {
+		this.x = x;
+		this.y = y;
+	}
+	
+	/**
+	 * This method looks for Routes to go.
+	 */
+	public void walk(int xx, int yy) {
+		int i =0;
+		this.x = xx;
+		this.y = yy;
+		// stop when u find a X
+		//while(!mazeMAtrix[x][y].equals("X")){
+		while(true){
+			System.out.println("mazeMAtrix[" + x + "][" + y + "] = "+mazeMAtrix[x][y]);			
+			System.out.println("mazeMAtrix[" + x + "][" + y + "+1] = "+mazeMAtrix[x][y+1]);			
+			if(mazeMAtrix[x][y+1].equals("X")) {
+				break;
+			}else {
+				List<Directions> routes = exploreRobot(x, y,lastDirection);
+				for(Directions d:routes) {
+					System.out.println("I have " + routes.size() + " rute to go: " + d.toString());					
+				}
+				//consider the possible routes before take an action
+				if(routes.size()==1) move(routes.get(0),x,y);
+				else if(routes.size()==2) {
+					System.out.println("A coordinates with 2 ways was found: (" + x + "," + y +")");
+					register2OptionsWay(routes,x,y);
+				}	
+				System.out.println("routes.size = " + routes.size());				
+			}
+		}
+	}
+
+	public void walk2(int xx, int yy) {
+		int i =0;
+		this.x = xx;
+		this.y = yy;
+		// stop when u find a X
+		//while(!mazeMAtrix[x][y].equals("X")){
+		while(true){
+			System.out.println("mazeMAtrix[" + x + "][" + y + "] = "+mazeMAtrix[x][y]);			
+			System.out.println("mazeMAtrix[" + x + "][" + y + "+1] = "+mazeMAtrix[x][y+1]);			
+			if(mazeMAtrix[x][y+1].equals("X")) {
+				//break; //OK
+			}else {
+			}
+			
+			
+			List<Directions> routes = exploreRobot(x, y,lastDirection);
+			for(Directions d:routes) {
+				System.out.println("I have " + routes.size() + " rute to go: " + d.toString());					
+			}
+			//consider the possible routes before take an action
+			if(routes.size()==1) move(routes.get(0),x,y);
+			else if(routes.size()==2) {
+				System.out.println("A coordinates with 2 ways was found: (" + x + "," + y +")");
+				register2OptionsWay(routes,x,y);
+				
+				// TRY 1st Route
+				
+				// THEN try 2d Route
+			}	
+			System.out.println("routes.size = " + routes.size());
+			System.out.println(" ------- ");
+			i++;
+			if(i>18) break;
+			
+			// IF ROBOT FINDS 3 "X" AROUND HIM, HE MUST COME BACK
+			
+		}
+	}
+	
+	
+	
+	private void register2OptionsWay(List<Directions> routes,int x, int y) {
+		List<HashMap<Directions,Coordinates>> twoWays = new ArrayList<HashMap<Directions,Coordinates>>();
+		for(Directions direction: routes) {
+			Map<Directions,Coordinates> way = new HashMap<Directions,Coordinates>();
+			Coordinates coordinates = new Coordinates();
+			coordinates.setX(x);
+			coordinates.setY(y);
+			way.put(direction, coordinates);
+		}
+		 
+	}
+	
+	/** This method explores the possible routes around it
+	 *  and creates a List with all the routes found
+	 * @param x
+	 * @param y
+	 * @return
+	 */
+	
+	public List<Directions> exploreRobot(int x,int y, Directions lastDirection) {
+		List<Directions> paths = new ArrayList<Directions>();
+		
+		if(mazeMAtrix[x-1][y].equals(" ") && !Directions.UP.equals(lastDirection)) {
+			paths.add(Directions.UP);
+		}
+		if(mazeMAtrix[x+1][y].equals(" ") && !Directions.DOWN.equals(lastDirection)) {
+			paths.add(Directions.DOWN);
+		}
+		if(mazeMAtrix[x][y+1].equals(" ") && !Directions.RIGHT.equals(lastDirection)) {
+			paths.add(Directions.RIGHT);
+		}
+		if(mazeMAtrix[x][y-1].equals(" ") && !Directions.LEFT.equals(lastDirection)) {
+			paths.add(Directions.LEFT);
+		}
+		
+		return paths;
+	}
+	
+	/**
+	 * This method allows that the Robot looks for a direction to move to
+	 * it explores the 4 directions trying to find an available route
+	 * @param x
+	 * @param y
+	 * @return
+	 */
+	public Directions moveSomeWhere(int x, int y) {
+		Directions direction = Directions.STATIC;
+		if(mazeMAtrix[x-1][y].equals(" ")) {
+			x--;
+			direction = Directions.UP;
+		}else if(mazeMAtrix[x+1][y].equals(" ")) {
+			x++;
+			direction = Directions.DOWN;
+		}else if(mazeMAtrix[x][y+1].equals(" ")) {
+			y++;
+			direction = Directions.RIGHT;
+		}else if(mazeMAtrix[x][y-1].equals(" ")) {
+			y--;
+			direction = Directions.LEFT;			
+		}
+		
+		return direction;
+	}
+	
+	
+	/** This method receives the Direction to move as parameter
+	 * it returns a boolean flag that indicates if it could move in the required Direction 
+	 * @param direction
+	 * @param x
+	 * @param y
+	 * @return
+	 */
+	public Boolean move(Directions direction,int x, int y) {
+		Boolean result = false;
+		switch(direction) {
+			case UP:
+				if(mazeMAtrix[x-1][y].equals(" ")) {
+					this.setX(--x);
+					result = true;
+					this.setLastDirection(Directions.DOWN); //the opposite
+					break;
+				}
+			case DOWN:
+				if(mazeMAtrix[x+1][y].equals(" ")) {
+					this.setX(++x);
+					result = true;
+					this.setLastDirection(Directions.UP); //the opposite
+					break;
+				}
+			case RIGHT:			
+				if(mazeMAtrix[x][y+1].equals(" ")) {
+					this.setY(++y);
+					result = true;
+					this.setLastDirection(Directions.LEFT); //the opposite
+					break;
+				}
+			case LEFT:
+				if(mazeMAtrix[x][y-1].equals(" ")) {
+					this.setX(--y);
+					result=true;
+					break;
+				}
+		default:
+			break;
+		}
+		return result;
+	}
+	protected Map<Integer, Directions> robotMovements = null;
+		
+	public RobotImpl() {
+		robotMovements = new HashMap<Integer, Directions>();
+	}
+	
+	@Override
+	public Boolean moveUp() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Boolean moveDown() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Boolean moveRight() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Boolean moveLeft() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void registerMovement(Directions direction) {
+		movementCounter++;
+		System.out.println(movementCounter);
+		robotMovements.put(movementCounter,direction);
+
+	}
+
+	@Override
+	public void start(Integer coordinateX, Integer coordinateY) {
+		// TODO Auto-generated method stub
+
+	}
+	
+	
+	public int getX() {
+		return x;
+	}
+
+	public void setX(int x) {
+		this.x = x;
+	}
+
+	public int getY() {
+		return y;
+	}
+
+	public void setY(int y) {
+		this.y = y;
+	}
+
+
+	public Directions getLastDirection() {
+		return lastDirection;
+	}
+
+	public void setLastDirection(Directions lastDirection) {
+		this.lastDirection = lastDirection;
+	}
+
+
+	class Coordinates {
+		private int x;
+		private int y;
+		
+		public void setX(int x) {
+			this.x = x;
+		}
+		
+		public int getX() {
+			return x;
+		}
+		
+		public void setY(int y) {
+			this.y = y;
+		}
+		
+		public int getY() {
+			return y;
+			
+		}
+	}
+
+}

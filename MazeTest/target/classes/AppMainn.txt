@@ -1,0 +1,15 @@
+import maze.objects.Directions;
+import maze.objects.Robot;
+import maze.objects.RobotImpl;
+
+/**
+ * Main Class
+ */
+public class AppMain {
+
+    public static void main(String[] args) {
+        System.out.println("Hello Maze");
+        Robot robot = new RobotImpl(3,3);
+        robot.walk2(3,3); //registerMovement(Directions.UP);
+    }
+}
